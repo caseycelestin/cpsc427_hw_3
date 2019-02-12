@@ -7,7 +7,7 @@ namespace cs427_527
 	class Matrix
 	{
 	public:	
-		// Creates a matrisx of size h by w
+		// Creates a matris of size h by w
 		Matrix(int h, int w);
 		
 		// Creates a deep copy of the given matrix
@@ -15,13 +15,27 @@ namespace cs427_527
 		
 		// Move contructor for Matrix
 		Matrix(const Matrix&& other);
+
+		// Destructor
+		~Matrix();
 		
 		// returns height of matrix
-		int height();
+		int height() const;
 		// returns width of matrix
-		int width();
+		int width() const;
 		
 		// returns reference to the element at the given location
-		T& at(int r, int c)
-	}
+		T& at(int r, int c);
+		
+	private:
+		const int row;
+		const int col;
+
+		void deallocate();
+		
+		T **row_col;	
+	};
 }
+#include "matrix.cpp"
+
+#endif
