@@ -11,7 +11,7 @@ namespace cs427_527
 		Matrix(int h, int w);
 		
 		// Creates a deep copy of the given matrix
-		Matrix(const Matrix& other);
+		Matrix(const Matrix&);
 		
 		// Move contructor for Matrix
 		Matrix(const Matrix&& other);
@@ -32,6 +32,7 @@ namespace cs427_527
 		const int col;
 
 		void deallocate();
+		void copy(const Matrix& other);
 		
 		T **row_col;	
 	};
