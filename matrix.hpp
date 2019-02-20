@@ -1,7 +1,7 @@
 #ifndef __CS427527_MATRIX_HPP
 #define __CS427527_MATRIX_HPP
 
-namespace cs427_527
+namespace cs427527
 {
 	template <typename T>
 	class Matrix
@@ -17,7 +17,7 @@ namespace cs427_527
 		Matrix& operator=(const Matrix &rhs);
 
 		// Move contructor for Matrix
-		Matrix(const Matrix&& other);
+		Matrix(Matrix&& other);
 
 		// move assignment operator
 		Matrix& operator=(Matrix &&rhs);
@@ -31,7 +31,7 @@ namespace cs427_527
 		int width() const;
 		
 		// returns reference to the element at the given location
-		T& at(int r, int c);
+		T& at(int r, int c) const;
 
 		// slice class
 		class slice 
@@ -53,7 +53,7 @@ namespace cs427_527
 		{
 		};
 
-		
+		void toPrint();
 	private:
 		const int row;
 		const int col;

@@ -2,7 +2,7 @@
 
 #include "matrix.hpp"
 
-namespace cs427_527
+namespace cs427527
 {
 	template<typename T>
 	Matrix<T>::Matrix(int h, int w):row(h), col(w)
@@ -14,6 +14,11 @@ namespace cs427_527
 		{
 			// Creates space for coulums, which are pointers to data
 			row_col[i] = (T*)(::operator new(col * sizeof(T)));
+
+			for (int j=0; j < col; j++)
+			{
+				row_col[i][j] = (T)NULL;
+			}
 		}
 	}
 
@@ -40,7 +45,7 @@ namespace cs427_527
 
 	// Moves data from one matrix to another
 	template <typename T>
-	Matrix<T>::Matrix(const Matrix&& other) : row(other.row), col(other.col)
+	Matrix<T>::Matrix(Matrix&& other) : row(other.row), col(other.col)
 	{
 		move(other);	
 	}
@@ -84,7 +89,7 @@ namespace cs427_527
 
 	// returns data at a specific location in matrix
 	template<typename T>
-	T& Matrix<T>::at(int r, int c)
+	T& Matrix<T>::at(int r, int c) const
 	{
 		// Check to see if t and c are in range
 		if( r < 0 || r > row || c < 0 || c > col)
@@ -94,6 +99,20 @@ namespace cs427_527
 		} else {
 			// returns data at matrix location
 			return row_col[r][c];
+		}
+	}
+
+	template<typename T>
+	void Matrix<T>::toPrint()
+	{
+		std::cout << row << " " << col << std::endl;
+		for(int i=0; i < row; i++)
+		{
+			for(int j=0; j < col; j++)
+			{
+				std::cout << at(i,j) << " ";
+			}
+			std::cout << std::endl;
 		}
 	}
 	
