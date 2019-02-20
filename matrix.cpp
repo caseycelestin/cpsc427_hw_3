@@ -1,5 +1,6 @@
-#include "matrix.hpp"
+#include <stdexcept>
 
+#include "matrix.hpp"
 
 namespace cs427_527
 {
@@ -22,6 +23,43 @@ namespace cs427_527
 	{
 		copy(other);
 	}
+	
+	// copy assignment operator
+	template<typename T>
+	Matrix<T>& Matrix<T>::operator=(const Matrix &rhs)
+	{
+		// checks to see if set to itself
+		if(&rhs != this)
+		{
+			deallocate();
+			copy(rhs);
+		}
+
+		return *this;
+	}
+
+	// Moves data from one matrix to another
+	template <typename T>
+	Matrix<T>::Matrix(const Matrix&& other) : row(other.row), col(other.col)
+	{
+		move(other);	
+	}
+
+	// move assignment operator
+	template<typename T>
+	Matrix<T>& Matrix<T>::operator=(Matrix &&rhs)
+	{
+		// checks to see if set to itself
+		if(&rhs != this)
+		{
+			// deallocates row_col
+			deallocate();
+			move(rhs);
+		}
+
+		return *this;
+
+	}
 
 	// Destructor for Matrix
 	template<typename T>
@@ -30,19 +68,36 @@ namespace cs427_527
 		deallocate();
 	}
 
+	// returns height of matrix
 	template<typename T>	
 	int Matrix<T>::height() const
 	{
 		return row;
 	}
 
-
+	// returns  width of matrix
 	template<typename T>	
 	int Matrix<T>::width() const
 	{
 		return col;
 	}
 
+	// returns data at a specific location in matrix
+	template<typename T>
+	T& Matrix<T>::at(int r, int c)
+	{
+		// Check to see if t and c are in range
+		if( r < 0 || r > row || c < 0 || c > col)
+		{
+			// throws error if out of range
+			throw std::out_of_range("");
+		} else {
+			// returns data at matrix location
+			return row_col[r][c];
+		}
+	}
+	
+	// helper function to deallocate row_col data
 	template<typename T>
 	void Matrix<T>::deallocate()
 	{
@@ -60,6 +115,7 @@ namespace cs427_527
 		::operator delete(row_col);
 	}
 
+	// helper function to copy a matrix
 	template<typename T>
 	void Matrix<T>::copy(const Matrix& other)	
 	{
@@ -77,6 +133,22 @@ namespace cs427_527
 				row_col[i][j] = other.row_col[i][j];
 			}
 		}
+	}
+
+	// helper function to move a matrix
+	template<typename T>
+	void Matrix<T>::move(Matrix& other)
+	{
+		// shallow copy
+		row_col = other.row_col;
+
+		// set pointers to NULL
+		for (int i=0; i < row; i++)
+		{
+			row_col[i] = NULL;
+		}
+
+		row_col = NULL;
 	}
 }
 
