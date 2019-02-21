@@ -4,6 +4,9 @@
 
 namespace cs427527
 {
+	/** Matrix implementation *************************************/
+
+	// Creates a matrix of size h by w
 	template<typename T>
 	Matrix<T>::Matrix(int h, int w):row(h), col(w)
 	{
@@ -43,7 +46,7 @@ namespace cs427527
 		return *this;
 	}
 
-	// Moves data from one matrix to another
+	// move constructor
 	template <typename T>
 	Matrix<T>::Matrix(Matrix&& other) : row(other.row), col(other.col)
 	{
@@ -101,6 +104,70 @@ namespace cs427527
 			return row_col[r][c];
 		}
 	}
+
+	
+	/** slice implementation **************************************/
+
+	// slice constructor
+	template<typename T>
+	Matrix<T>::slice::slice(bool t, int s, const Matrix<T> *m) : matrix(m)
+	{
+		type = t;
+		start = s;
+		// matrix = m;
+	}
+
+	// returns referece to element at index of slice
+	template<typename T>
+	T& Matrix<T>::slice::operator[](int i) 
+	{	
+		// type == true then col
+		if(type)
+		{
+			return (*matrix).at(i, start);
+		}
+		// type != true then row
+		else
+		{
+			return (*matrix).at(start, i);
+		}
+	}
+
+
+	// row slice constructor
+	template<typename T>
+	typename Matrix<T>::slice Matrix<T>::operator[](int row) 
+	{
+		Matrix<T>::slice s{0, row, this};
+		return s;
+	}
+
+	template<typename T>
+	typename Matrix<T>::slice Matrix<T>::operator[](int row) const
+	{
+		// Matrix<T> *test = this;
+		Matrix<T>::slice s{0, row, this};
+		return s;
+	}
+
+	// col slice creator
+	template<typename T>
+	typename Matrix<T>::slice Matrix<T>::column(int col) 
+	{
+		Matrix<T>::slice s{1, col, this};
+		return s;
+	}
+
+	// const col getter
+	template<typename T>
+	typename Matrix<T>::slice Matrix<T>::column(int col) const
+	{
+		Matrix<T>::slice s{1, col, this};
+		return s;
+	}
+
+
+	/** helper functions ******************************************/
 
 	template<typename T>
 	void Matrix<T>::toPrint()

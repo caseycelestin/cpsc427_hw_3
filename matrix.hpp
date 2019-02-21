@@ -36,7 +36,45 @@ namespace cs427527
 		// slice class
 		class slice 
 		{
+			public:
+				
+				// slice constructor
+				slice(bool t, int index, const Matrix<T> *m);
+
+				// returns refrence to element at index of slice
+				T& operator[](int i);
+
+				// return itererator at beginning of slice
+				// iterator begin();
+
+				// return iterator at end of slice
+				// iterator end();
+
+				// copy constructor
+				// slice(const slice&);
+
+			private:
+				//  index of beginning
+				int start;
+				// row (false) or col (true)
+				bool type;
+				// Matrix of slice
+				const Matrix<T> *matrix;
+				
 		};
+
+		// row slice contructor
+		slice operator[](int row);
+
+		// const row getter
+		slice operator[](int row) const;
+
+		// col slice constructor
+		slice column(int col);
+
+		// const col getter
+		slice column(int col) const;
+
 
 		// const_slice class
 		class const_slice

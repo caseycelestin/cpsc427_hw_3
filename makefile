@@ -1,5 +1,5 @@
 CXX=g++
-CXXFLAGS=-Wall -pedantic -std=c++17 -g -DMATRIX
+CXXFLAGS=-Wall -pedantic -std=c++17 -g -DSLICE
 
 all: Main Unit
 
