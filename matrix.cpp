@@ -110,7 +110,7 @@ namespace cs427527
 
 	// slice constructor
 	template<typename T>
-	Matrix<T>::slice::slice(bool t, int s, const Matrix<T> *m) : matrix(m)
+	Matrix<T>::slice::slice(bool t, int s, Matrix<T> *m) : matrix(m)
 	{
 		type = t;
 		start = s;
@@ -133,6 +133,15 @@ namespace cs427527
 		}
 	}
 
+	// copy constructor
+	template<typename T>
+	Matrix<T>::slice::slice(const slice& other)
+	{
+		start = other.start;
+		type = other.type;
+		matrix = other.matrix;	
+	}
+
 
 	// row slice constructor
 	template<typename T>
@@ -142,13 +151,6 @@ namespace cs427527
 		return s;
 	}
 
-	template<typename T>
-	typename Matrix<T>::slice Matrix<T>::operator[](int row) const
-	{
-		// Matrix<T> *test = this;
-		Matrix<T>::slice s{0, row, this};
-		return s;
-	}
 
 	// col slice creator
 	template<typename T>
@@ -158,11 +160,54 @@ namespace cs427527
 		return s;
 	}
 
-	// const col getter
+	
+	/** const_slice implementation ********************************/
+
+	// const_slice constructor
 	template<typename T>
-	typename Matrix<T>::slice Matrix<T>::column(int col) const
+	Matrix<T>::const_slice::const_slice(bool t, int s, const Matrix<T> *m) : matrix(m)
 	{
-		Matrix<T>::slice s{1, col, this};
+		type = t;
+		start = s;
+	}
+
+	// returns referece to element at index of slice
+	template<typename T>
+	T& Matrix<T>::const_slice::operator[](int i) const
+	{	
+		// type == true then col
+		if(type)
+		{
+			return (*matrix).at(i, start);
+		}
+		// type != true then row
+		else
+		{
+			return (*matrix).at(start, i);
+		}
+	}
+
+	template <typename T>
+	Matrix<T>::const_slice::const_slice(const const_slice& other)
+	{
+		start = other.start;
+		type = other.type;
+		matrix = other.matrix;
+	}
+
+	// const row creator
+	template<typename T>
+	typename Matrix<T>::const_slice Matrix<T>::operator[](int row) const
+	{
+		Matrix<T>::const_slice s{0, row, this};
+		return s;
+	}
+
+	// const col creator
+	template<typename T>
+	typename Matrix<T>::const_slice Matrix<T>::column(int col) const
+	{
+		Matrix<T>::const_slice s{1, col, this};
 		return s;
 	}
 
