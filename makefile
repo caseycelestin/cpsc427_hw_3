@@ -1,14 +1,8 @@
 CXX=g++
-CXXFLAGS=-Wall -pedantic -std=c++17 -g -DSLICE
-
-all: Main Unit
-
-Main: main.o 
-	${CXX} ${CXXFLAGS} -o Main main.o 
+CXXFLAGS=-Wall -pedantic -std=c++17 -g -DFINAL
 
 Unit: matrix_unit.o
 	${CXX} ${CXXFLAGS} -o Unit matrix_unit.o
 
-main.o: matrix.hpp
 matrix_unit.o: matrix.hpp 
 

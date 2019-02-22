@@ -42,7 +42,6 @@ namespace cs427527
 			deallocate();
 			copy(rhs);
 		}
-
 		return *this;
 	}
 
@@ -64,9 +63,7 @@ namespace cs427527
 			deallocate();
 			move(rhs);
 		}
-
 		return *this;
-
 	}
 
 	// Destructor for Matrix
@@ -110,16 +107,16 @@ namespace cs427527
 
 	// slice constructor
 	template<typename T>
-	Matrix<T>::slice::slice(bool t, int s, Matrix<T> *m) : matrix(m)
+	Matrix<T>::slice::slice(bool t, int s, int stp,Matrix<T> *m) : matrix(m)
 	{
 		type = t;
 		start = s;
-		// matrix = m;
+		stop = stp;
 	}
 
 	// returns referece to element at index of slice
 	template<typename T>
-	T& Matrix<T>::slice::operator[](int i) 
+	T& Matrix<T>::slice::operator[](int i) const
 	{	
 		// type == true then col
 		if(type)
@@ -133,6 +130,38 @@ namespace cs427527
 		}
 	}
 
+	// iterator to beginning of slice
+	template<typename T>
+	typename Matrix<T>::iterator Matrix<T>::slice::begin() 
+	{
+		Matrix<T>::iterator i{this, 0}; 
+		return i;
+	}
+
+	// iterator to beginning of slice
+	template<typename T>
+	typename Matrix<T>::iterator Matrix<T>::slice::begin() const
+	{
+		Matrix<T>::iterator i{this, 0}; 
+		return i;
+	}
+
+	// iterator to end of slice
+	template<typename T>
+	typename Matrix<T>::iterator Matrix<T>::slice::end() 
+	{
+		Matrix<T>::iterator i{this, stop};
+		return i;
+	}
+
+	// iterator to end of slice
+	template<typename T>
+	typename Matrix<T>::iterator Matrix<T>::slice::end() const
+	{
+		Matrix<T>::iterator i{this, stop};
+		return i;
+	}
+
 	// copy constructor
 	template<typename T>
 	Matrix<T>::slice::slice(const slice& other)
@@ -142,12 +171,21 @@ namespace cs427527
 		matrix = other.matrix;	
 	}
 
+	template<typename T>
+	bool Matrix<T>::slice::operator==(const slice& rhs) const
+	{
+		if(matrix == rhs.matrix && start == rhs.start)
+			return true;
+		else
+			return false;
+	}
+
 
 	// row slice constructor
 	template<typename T>
 	typename Matrix<T>::slice Matrix<T>::operator[](int row) 
 	{
-		Matrix<T>::slice s{0, row, this};
+		Matrix<T>::slice s{0, row, col, this};
 		return s;
 	}
 
@@ -156,7 +194,7 @@ namespace cs427527
 	template<typename T>
 	typename Matrix<T>::slice Matrix<T>::column(int col) 
 	{
-		Matrix<T>::slice s{1, col, this};
+		Matrix<T>::slice s{1, col, row, this};
 		return s;
 	}
 
@@ -165,13 +203,14 @@ namespace cs427527
 
 	// const_slice constructor
 	template<typename T>
-	Matrix<T>::const_slice::const_slice(bool t, int s, const Matrix<T> *m) : matrix(m)
+	Matrix<T>::const_slice::const_slice(bool t, int s, int stp, const Matrix<T> *m) : matrix(m)
 	{
 		type = t;
 		start = s;
+		stop = stp;
 	}
 
-	// returns referece to element at index of slice
+	// returns referece to element at index of const_slice
 	template<typename T>
 	T& Matrix<T>::const_slice::operator[](int i) const
 	{	
@@ -187,6 +226,22 @@ namespace cs427527
 		}
 	}
 
+	// const_iterator to beginning of const_slice
+	template<typename T>
+	typename Matrix<T>::const_iterator Matrix<T>::const_slice::begin() const
+	{
+		Matrix<T>::const_iterator i{this, 0}; 
+		return i;
+	}
+
+	// const_iterator to end of const_slice
+	template<typename T>
+	typename Matrix<T>::const_iterator Matrix<T>::const_slice::end() const
+	{
+		Matrix<T>::const_iterator i{this, stop};
+		return i;
+	}
+	// copy constructor
 	template <typename T>
 	Matrix<T>::const_slice::const_slice(const const_slice& other)
 	{
@@ -195,11 +250,21 @@ namespace cs427527
 		matrix = other.matrix;
 	}
 
+	// const_slice comparator
+	template<typename T>
+	bool Matrix<T>::const_slice::operator==(const const_slice& rhs) const
+	{
+		if(matrix == rhs.matrix && start == rhs.start)
+			return true;
+		else
+			return false;
+	}
+
 	// const row creator
 	template<typename T>
 	typename Matrix<T>::const_slice Matrix<T>::operator[](int row) const
 	{
-		Matrix<T>::const_slice s{0, row, this};
+		Matrix<T>::const_slice s{0, row, col, this};
 		return s;
 	}
 
@@ -207,17 +272,105 @@ namespace cs427527
 	template<typename T>
 	typename Matrix<T>::const_slice Matrix<T>::column(int col) const
 	{
-		Matrix<T>::const_slice s{1, col, this};
+		Matrix<T>::const_slice s{1, col, row, this};
 		return s;
 	}
 
+	/** iterator implementation ***********************************/
+	
+	// constructor
+	template <typename T>
+	Matrix<T>::iterator::iterator(const Matrix<T>::slice *s, int i):slice(s)
+	{
+		index = i;
+	}
+
+	// returns element iterator is at
+	template <typename T>
+	T& Matrix<T>::iterator::operator*()
+	{
+		return (*slice)[index];
+	}
+	
+	// advance iterator
+	template <typename T>
+	typename Matrix<T>::iterator& Matrix<T>::iterator::operator++()
+	{
+		index++;
+		return *this;
+	}
+
+	// equality comparator
+	template <typename T>
+	bool Matrix<T>::iterator::operator==(const iterator& rhs) const
+	{
+		if(index == rhs.index && *slice == *rhs.slice)
+			return true;
+		else 
+			return false;	
+	}
+
+	// inequality comparator
+	template <typename T>
+	bool Matrix<T>::iterator::operator!=(const iterator& rhs) const
+	{
+		if(*this == rhs)
+			return false;
+		else
+			return true;
+	}
+
+
+	/** const_iterator implementation ***********************************/
+	
+	// constructor
+	template <typename T>
+	Matrix<T>::const_iterator::const_iterator(const Matrix<T>::const_slice *s, int i):const_slice(s)
+	{	
+		index = i;
+	}
+
+	// returns element const_iterator is at
+	template <typename T>
+	T& Matrix<T>::const_iterator::operator*() const
+	{
+		return (*const_slice)[index];
+	}
+	
+	// advance const_iterator
+	template <typename T>
+	typename Matrix<T>::const_iterator& Matrix<T>::const_iterator::operator++() 
+	{
+		index++;
+		return *this;
+	}
+
+	// equality comparator
+	template <typename T>
+	bool Matrix<T>::const_iterator::operator==(const const_iterator& rhs) const
+	{
+		if(index == rhs.index && *const_slice == *rhs.const_slice)
+			return true;
+		else 
+			return false;	
+	}
+
+	// inequality comparator
+	template <typename T>
+	bool Matrix<T>::const_iterator::operator!=(const const_iterator& rhs) const
+	{
+		if(*this == rhs)
+			return false;
+		else
+			return true;
+	}
 
 	/** helper functions ******************************************/
 
 	template<typename T>
 	void Matrix<T>::toPrint()
 	{
-		std::cout << row << " " << col << std::endl;
+		std::cout << row << "x" << col << std::endl;
 		for(int i=0; i < row; i++)
 		{
 			for(int j=0; j < col; j++)

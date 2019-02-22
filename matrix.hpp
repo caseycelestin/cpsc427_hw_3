@@ -7,6 +7,11 @@ namespace cs427527
 	class Matrix
 	{
 	public:	
+		class slice;
+		class const_slice;
+		class iterator;
+		class const_iterator;
+
 		// Creates a matris of size h by w
 		Matrix(int h, int w);
 		
@@ -33,29 +38,41 @@ namespace cs427527
 		// returns reference to the element at the given location
 		T& at(int r, int c) const;
 
+
 		// slice class
 		class slice 
 		{
 			public:
-				
+			
 				// slice constructor
-				slice(bool t, int index, Matrix<T> *m);
+				slice(bool t, int index, int stp, Matrix<T> *m);
 
 				// returns refrence to element at index of slice
-				T& operator[](int i);
+				T& operator[](int i) const;
 
 				// return itererator at beginning of slice
-				// iterator begin();
+				iterator begin();
+
+				// begin for const slices
+				iterator begin() const;
 
 				// return iterator at end of slice
-				// iterator end();
+				iterator end();
+
+				// end for const slices
+				iterator end() const; 
 
 				// copy constructor
 				slice(const slice& other);
 
+				// slice equality method
+				bool operator==(const slice& rhs) const;
+
 			private:
 				//  index of beginning
 				int start;
+				// lenght of row or col
+				int stop;
 				// row (false) or col (true)
 				bool type;
 				// Matrix of slice
@@ -77,23 +94,28 @@ namespace cs427527
 			public:
 				
 				// slice constructor
-				const_slice(bool t, int index, const Matrix<T> *m);
+				const_slice(bool t, int index, int stp, const Matrix<T> *m);
 
 				// returns refrence to element at index of slice
 				T& operator[](int i) const;
 
 				// return itererator at beginning of slice
-				// iterator begin();
+				const_iterator begin() const;
 
 				// return iterator at end of slice
-				// iterator end();
+				const_iterator end() const;
 
 				// copy constructor
 				const_slice(const const_slice& other);
 
+				// slice equality method
+				bool operator==(const const_slice& rhs) const;
+
 			private:
 				//  index of beginning
 				int start;
+				// length of row or col
+				int stop;
 				// row (false) or col (true)
 				bool type;
 				// Matrix of slice
@@ -109,11 +131,57 @@ namespace cs427527
 		// iterator class
 		class iterator
 		{
+			public: 
+				// constructor
+				iterator(const slice *s, int i);
+
+				// returns element iterator is at
+				T& operator*();
+
+				// advance iterator 
+				iterator& operator++();
+
+				// equality comparator
+				bool operator==(const iterator& rhs) const;
+
+				// inequaloty comparator
+				bool operator!=(const iterator& rhs) const;
+
+			private:
+				// index of iterator
+				int index;
+				// slice
+				const slice *slice;
+
 		};
+
+
+
 
 		// const_iterator class
 		class const_iterator
 		{
+			public: 
+				// constructor
+				const_iterator(const const_slice *s, int i);
+
+				// returns element const_iterator is at
+				T& operator*() const;
+
+				// advance const_iterator 
+				const_iterator& operator++();
+
+				// equality comparator
+				bool operator==(const const_iterator& rhs) const;
+
+				// inequaloty comparator
+				bool operator!=(const const_iterator& rhs) const;
+
+			private:
+				// index of const_iterator
+				int index;
+				// const_slice
+				const const_slice *const_slice;
 		};
 
 		void toPrint();
